@@ -1,256 +1,285 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name | Professional Portfolio</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Tailwind slate-50 */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1e40af', /* Tailwind blue-700 */
+                        'secondary-gray': '#4b5563', /* Tailwind gray-600 */
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-gray-800 antialiased">
 
-// Define the structure of the data using TypeScript interfaces for type safety.
-// These interfaces must be defined in the module scope (outside the class) for proper compilation.
-interface SkillSet {
-  title: string;
-  items: string[];
-}
-
-interface Project {
-  name: string;
-  description: string;
-  imageUrl: string;
-  techStack: string[];
-  liveUrl: string;
-  githubUrl: string;
-}
-
-interface PortfolioData {
-  name: string;
-  title: string;
-  email: string;
-  social: {
-    linkedin: string;
-    github: string;
-  };
-  skills: SkillSet[];
-  projects: Project[];
-}
-
-
-// This is the main component for the single-file Angular application.
-// In a real project, this would be split into many smaller components and files.
-@Component({
-  selector: 'app-root',
-  // Using an inline template with Tailwind CSS for rapid styling
-  template: `
-    <div class="min-h-screen bg-slate-50 antialiased text-gray-800">
-
-      <!-- Navigation Bar (Sticky Top) -->
-      <nav class="sticky top-0 z-50 bg-white shadow-lg">
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex justify-between items-center h-16">
-            <a href="#" class="text-2xl font-bold text-indigo-700 hover:text-indigo-900 transition">
-              {{ portfolioData().name }}
-            </a>
-            <!-- Desktop Links -->
-            <div class="hidden md:flex space-x-6 font-medium">
-              <a href="#about" class="text-gray-600 hover:text-indigo-700 transition">About</a>
-              <a href="#skills" class="text-gray-600 hover:text-indigo-700 transition">Skills</a>
-              <a href="#projects" class="text-gray-600 hover:text-indigo-700 transition">Projects</a>
-              <a href="#contact" class="px-3 py-1 rounded-full text-white bg-indigo-600 hover:bg-indigo-700 transition">Contact</a>
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Name -->
+                <a href="#" class="text-2xl font-bold text-primary-blue hover:text-blue-800 transition duration-300">
+                    [Your Name]
+                </a>
+                <!-- Desktop Links -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="text-secondary-gray hover:text-primary-blue font-medium transition duration-300">About</a>
+                    <a href="#skills" class="text-secondary-gray hover:text-primary-blue font-medium transition duration-300">Skills</a>
+                    <a href="#projects" class="text-secondary-gray hover:text-primary-blue font-medium transition duration-300">Projects</a>
+                    <a href="#contact" class="text-secondary-gray hover:text-primary-blue font-medium transition duration-300">Contact</a>
+                </div>
+                <!-- Mobile Menu Button (Hamburger) -->
+                <button id="mobile-menu-button" class="md:hidden p-2 text-secondary-gray hover:text-primary-blue rounded-lg transition duration-300" aria-label="Open menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
-          </div>
         </div>
-      </nav>
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-inner">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-secondary-gray hover:bg-gray-50 hover:text-primary-blue transition duration-300">About</a>
+                <a href="#skills" class="block px-3 py-2 rounded-md text-base font-medium text-secondary-gray hover:bg-gray-50 hover:text-primary-blue transition duration-300">Skills</a>
+                <a href="#projects" class="block px-3 py-2 rounded-md text-base font-medium text-secondary-gray hover:bg-gray-50 hover:text-primary-blue transition duration-300">Projects</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-secondary-gray hover:bg-gray-50 hover:text-primary-blue transition duration-300">Contact</a>
+            </div>
+        </div>
+    </nav>
 
-      <main>
+    <main>
         <!-- Hero Section -->
-        <section id="hero" class="relative py-20 lg:py-32 overflow-hidden">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-10">
-            <div class="md:w-3/5 text-center md:text-left">
-              <span class="text-lg font-semibold text-indigo-600 mb-2 block">Hello, I'm</span>
-              <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-none mb-4">
-                {{ portfolioData().name }}
-              </h1>
-              <p class="text-2xl text-gray-600 mb-8">
-                {{ portfolioData().title }}
-              </p>
-              <a href="#projects" class="inline-block px-8 py-3 text-lg font-semibold text-white bg-indigo-600 rounded-lg shadow-xl hover:bg-indigo-700 transition transform hover:scale-[1.03]">
-                Explore Projects
-              </a>
+        <section id="hero" class="py-20 lg:py-32 bg-gray-50 border-b-4 border-primary-blue">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="md:w-1/2 text-center md:text-left">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-4">
+                        Hi, I'm <span class="text-primary-blue">Jane Doe</span>
+                    </h1>
+                    <p class="text-xl sm:text-2xl text-secondary-gray mb-6">
+                        A <span class="font-semibold">Full-Stack Developer</span> passionate about building scalable web applications.
+                    </p>
+                    <a href="#projects" class="inline-block px-8 py-3 text-lg font-semibold text-white bg-primary-blue rounded-full shadow-lg hover:bg-blue-800 transition duration-300 transform hover:scale-105">
+                        View My Work
+                    </a>
+                </div>
+                <div class="md:w-1/2 flex justify-center md:justify-end">
+                    <!-- Placeholder for Profile Picture -->
+                    <img src="https://placehold.co/250x250/2563eb/ffffff?text=Profile+Photo" alt="Jane Doe Profile" class="w-64 h-64 rounded-full object-cover shadow-xl border-4 border-white transition duration-500 hover:shadow-2xl hover:border-primary-blue">
+                </div>
             </div>
-            <div class="md:w-2/5 flex justify-center md:justify-end">
-                <!-- Placeholder for Profile Picture -->
-                <img src="https://placehold.co/300x300/4f46e5/ffffff?text=Jane+D" alt="Profile Photo" 
-                     class="w-72 h-72 rounded-full object-cover shadow-2xl border-4 border-white transition hover:shadow-indigo-400/50">
-            </div>
-          </div>
         </section>
 
         <!-- About Section -->
-        <section id="about" class="py-20 bg-white shadow-inner">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-4xl font-bold text-center text-indigo-700 mb-12">Who I Am</h2>
-            <div class="max-w-4xl mx-auto text-lg text-gray-600 space-y-6">
-              <p>
-                As a developer with 6+ years of experience, I specialize in building highly scalable, maintainable, and user-friendly applications using the Angular ecosystem. I am a firm believer in type safety (thanks, TypeScript!) and reactive state management.
-              </p>
-              <p>
-                My expertise spans from architecting robust micro-frontend solutions to optimizing database queries in PostgreSQL. I enjoy tackling complex performance challenges and mentoring junior developers to foster a culture of technical excellence.
-              </p>
-              <p class="font-semibold italic text-center text-indigo-600 pt-4">
-                "Clean code that solves real-world problems."
-              </p>
+        <section id="about" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-primary-blue mb-10">About Me</h2>
+                <div class="max-w-3xl mx-auto text-lg text-secondary-gray space-y-6">
+                    <p>
+                        I have 5 years of experience designing and implementing robust software solutions. My journey started with front-end development using React and quickly expanded to include backend technologies like Node.js and Python. I thrive on challenges and constantly seek out new technologies to improve efficiency and performance.
+                    </p>
+                    <p>
+                        Currently, I am focused on cloud-native architectures and exploring the possibilities of serverless computing. When I'm not coding, you can find me hiking local trails or contributing to open-source projects.
+                    </p>
+                    <div class="text-center pt-4">
+                        <a href="link-to-your-resume.pdf" target="_blank" class="text-primary-blue hover:text-blue-800 font-semibold underline transition duration-300">
+                            Download My Resume (PDF)
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
         </section>
 
         <!-- Skills Section -->
-        <section id="skills" class="py-20 bg-slate-50">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-4xl font-bold text-center text-indigo-700 mb-12">Core Competencies</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              @for (skill of portfolioData().skills; track skill.title) {
-                <div class="p-6 bg-white rounded-xl shadow-lg border-t-4 border-indigo-500 hover:shadow-xl transition transform hover:-translate-y-1 text-center">
-                  <h3 class="text-xl font-semibold mb-3 text-gray-900">{{ skill.title }}</h3>
-                  <ul class="text-sm text-gray-600 space-y-1">
-                    @for (item of skill.items; track item) {
-                      <li class="p-1 bg-slate-50 rounded-md">{{ item }}</li>
-                    }
-                  </ul>
+        <section id="skills" class="py-20 bg-gray-50 border-t border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-primary-blue mb-10">Technical Skills</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+                    <!-- Skill Card 1: Frontend -->
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 text-center border-t-4 border-indigo-500">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Frontend</h3>
+                        <ul class="text-secondary-gray space-y-1 text-sm">
+                            <li>React, Next.js</li>
+                            <li>JavaScript (ES6+), TypeScript</li>
+                            <li>Tailwind CSS, SASS</li>
+                        </ul>
+                    </div>
+                    <!-- Skill Card 2: Backend -->
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 text-center border-t-4 border-green-500">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Backend</h3>
+                        <ul class="text-secondary-gray space-y-1 text-sm">
+                            <li>Node.js, Express</li>
+                            <li>Python, Django/Flask</li>
+                            <li>REST APIs, GraphQL</li>
+                        </ul>
+                    </div>
+                    <!-- Skill Card 3: Databases -->
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 text-center border-t-4 border-red-500">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Databases</h3>
+                        <ul class="text-secondary-gray space-y-1 text-sm">
+                            <li>PostgreSQL, MongoDB</li>
+                            <li>Firebase/Firestore</li>
+                            <li>Redis (Caching)</li>
+                        </ul>
+                    </div>
+                    <!-- Skill Card 4: Tools & DevOps -->
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 text-center border-t-4 border-yellow-500">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">DevOps & Tools</h3>
+                        <ul class="text-secondary-gray space-y-1 text-sm">
+                            <li>Git, GitHub, CI/CD</li>
+                            <li>Docker, Kubernetes</li>
+                            <li>AWS, Azure, GCP</li>
+                        </ul>
+                    </div>
                 </div>
-              }
             </div>
-          </div>
         </section>
 
         <!-- Projects Section -->
         <section id="projects" class="py-20 bg-white">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-4xl font-bold text-center text-indigo-700 mb-12">My Work</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              @for (project of portfolioData().projects; track project.name) {
-                <div class="rounded-xl overflow-hidden shadow-2xl bg-gray-50 transition duration-500 hover:shadow-indigo-300/70">
-                  <img [src]="project.imageUrl" [alt]="project.name" class="w-full h-52 object-cover">
-                  <div class="p-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ project.name }}</h3>
-                    <p class="text-gray-600 text-sm mb-4">{{ project.description }}</p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                      @for (tech of project.techStack; track tech) {
-                        <span class="text-xs font-medium px-3 py-1 rounded-full"
-                              [ngClass]="{'bg-blue-100 text-blue-800': tech === 'Angular', 
-                                          'bg-green-100 text-green-800': tech === 'Node.js', 
-                                          'bg-yellow-100 text-yellow-800': tech === 'TypeScript',
-                                          'bg-red-100 text-red-800': tech === 'NgRx'}">
-                          {{ tech }}
-                        </span>
-                      }
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-primary-blue mb-10">Featured Projects</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                    <!-- Project Card 1 -->
+                    <div class="bg-gray-50 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-[1.02] hover:shadow-2xl">
+                        <img src="https://placehold.co/600x400/10b981/ffffff?text=Project+1+Image" alt="Project 1: E-Commerce Platform" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">E-Commerce Platform</h3>
+                            <p class="text-secondary-gray text-sm mb-4">
+                                A fully functional e-commerce site with user authentication, payment processing, and admin dashboard.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">React</span>
+                                <span class="text-xs font-semibold px-3 py-1 bg-green-100 text-green-800 rounded-full">Node.js</span>
+                                <span class="text-xs font-semibold px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full">MongoDB</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <a href="link-to-live-demo.com" target="_blank" class="text-primary-blue hover:text-blue-800 font-medium text-sm transition duration-300">Live Demo &rarr;</a>
+                                <a href="link-to-github-repo" target="_blank" class="text-secondary-gray hover:text-gray-900 font-medium text-sm transition duration-300">GitHub Repo &rarr;</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex justify-between mt-4">
-                      <a [href]="project.liveUrl" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-semibold transition flex items-center">
-                        Live Demo
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                      </a>
-                      <a [href]="project.githubUrl" target="_blank" class="text-gray-600 hover:text-gray-900 transition flex items-center">
-                        GitHub
-                        <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.373 3.433 9.927 8.243 11.459.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.334-1.756-1.334-1.756-1.087-.744.084-.73.084-.73 1.205.084 1.838 1.238 1.838 1.238 1.07 1.835 2.809 1.305 3.495.998.108-.77.42-.998.761-1.226-2.665-.297-5.465-1.334-5.465-5.931 0-1.31.465-2.382 1.235-3.221-.125-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.399 1.02.0 2.046.133 3.003.399 2.293-1.552 3.301-1.23 3.301-1.23.652 1.652.242 2.873.117 3.176.77.839 1.235 1.911 1.235 3.221 0 4.609-2.804 5.624-5.475 5.921.42.36.793 1.096.793 2.207v3.293c0 .319.192.694.8.576C20.565 22.091 24 17.535 24 12c0-6.627-5.373-12-12-12z"/></svg>
-                      </a>
+
+                    <!-- Project Card 2 -->
+                    <div class="bg-gray-50 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-[1.02] hover:shadow-2xl">
+                        <img src="https://placehold.co/600x400/f59e0b/ffffff?text=Project+2+Image" alt="Project 2: Data Visualization App" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Data Visualization Tool</h3>
+                            <p class="text-secondary-gray text-sm mb-4">
+                                Interactive dashboard to analyze large datasets, built with Python and D3.js for charting.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs font-semibold px-3 py-1 bg-red-100 text-red-800 rounded-full">Python</span>
+                                <span class="text-xs font-semibold px-3 py-1 bg-pink-100 text-pink-800 rounded-full">D3.js</span>
+                                <span class="text-xs font-semibold px-3 py-1 bg-purple-100 text-purple-800 rounded-full">PostgreSQL</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <a href="link-to-live-demo.com" target="_blank" class="text-primary-blue hover:text-blue-800 font-medium text-sm transition duration-300">Live Demo &rarr;</a>
+                                <a href="link-to-github-repo" target="_blank" class="text-secondary-gray hover:text-gray-900 font-medium text-sm transition duration-300">GitHub Repo &rarr;</a>
+                            </div>
+                        </div>
                     </div>
-                  </div>
+
+                    <!-- Project Card 3 -->
+                    <div class="bg-gray-50 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-[1.02] hover:shadow-2xl">
+                        <img src="https://placehold.co/600x400/9333ea/ffffff?text=Project+3+Image" alt="Project 3: Mobile Task Manager" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Serverless Task Manager</h3>
+                            <p class="text-secondary-gray text-sm mb-4">
+                                A cross-platform mobile app built using React Native and AWS Lambda for the backend.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs font-semibold px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">React Native</span>
+                                <span class="text-xs font-semibold px-3 py-1 bg-gray-100 text-gray-800 rounded-full">AWS Lambda</span>
+                                <span class="text-xs font-semibold px-3 py-1 bg-red-100 text-red-800 rounded-full">DynamoDB</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <a href="link-to-live-demo.com" target="_blank" class="text-primary-blue hover:text-blue-800 font-medium text-sm transition duration-300">App Store Link &rarr;</a>
+                                <a href="link-to-github-repo" target="_blank" class="text-secondary-gray hover:text-gray-900 font-medium text-sm transition duration-300">GitHub Repo &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-              }
+                <div class="text-center pt-12">
+                    <a href="link-to-your-github.com" target="_blank" class="text-lg font-semibold text-primary-blue hover:text-blue-800 transition duration-300 flex items-center justify-center space-x-2">
+                        <span>See All Projects on GitHub</span>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.373 3.433 9.927 8.243 11.459.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.334-1.756-1.334-1.756-1.087-.744.084-.73.084-.73 1.205.084 1.838 1.238 1.838 1.238 1.07 1.835 2.809 1.305 3.495.998.108-.77.42-.998.761-1.226-2.665-.297-5.465-1.334-5.465-5.931 0-1.31.465-2.382 1.235-3.221-.125-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.399 1.02.0 2.046.133 3.003.399 2.293-1.552 3.301-1.23 3.301-1.23.652 1.652.242 2.873.117 3.176.77.839 1.235 1.911 1.235 3.221 0 4.609-2.804 5.624-5.475 5.921.42.36.793 1.096.793 2.207v3.293c0 .319.192.694.8.576c4.811-1.533 8.243-6.091 8.243-11.459 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
-            <div class="text-center pt-12">
-              <a href="https://github.com/yourusername" target="_blank" class="text-lg font-semibold text-indigo-600 hover:text-indigo-800 underline transition">
-                &mdash; See all {{ portfolioData().projects.length }} projects &mdash;
-              </a>
-            </div>
-          </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-slate-50 border-t border-gray-200">
-          <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-4xl font-bold text-indigo-700 mb-6">Let's Connect</h2>
-            <p class="text-xl text-gray-600 mb-8">
-              Whether you have a project idea, a job offer, or just want to chat about Angular, my inbox is open.
-            </p>
+        <section id="contact" class="py-20 bg-gray-50 border-t border-gray-200">
+            <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold text-primary-blue mb-4">Get In Touch</h2>
+                <p class="text-lg text-secondary-gray mb-8">
+                    I'm currently available for freelance opportunities or full-time roles. Let's build something great together.
+                </p>
 
-            <a [href]="'mailto:' + portfolioData().email" 
-               class="inline-flex items-center space-x-3 px-8 py-3 text-lg font-bold text-white bg-green-500 rounded-full shadow-lg hover:bg-green-600 transition duration-300 transform hover:scale-[1.05]">
-               <!-- Email Icon -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-9 13h9a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-              <span>{{ portfolioData().email }}</span>
-            </a>
-            
-            <div class="flex justify-center space-x-6 mt-8">
-                <a [href]="portfolioData().social.linkedin" target="_blank" class="text-gray-500 hover:text-indigo-700 transition">
-                    <!-- LinkedIn Icon (Adjusted for Tailwind/SVG styling) -->
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.532-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.756 7 2.476v6.759z"/></svg>
-                </a>
-                <a [href]="portfolioData().social.github" target="_blank" class="text-gray-500 hover:text-indigo-700 transition">
-                    <!-- GitHub Icon -->
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.373 3.433 9.927 8.243 11.459.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.334-1.756-1.334-1.756-1.087-.744.084-.73.084-.73 1.205.084 1.838 1.238 1.838 1.238 1.07 1.835 2.809 1.305 3.495.998.108-.77.42-.998.761-1.226-2.665-.297-5.465-1.334-5.465-5.931 0-1.31.465-2.382 1.235-3.221-.125-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.399 1.02.0 2.046.133 3.003.399 2.293-1.552 3.301-1.23 3.301-1.23.652 1.652.242 2.873.117 3.176.77.839 1.235 1.911 1.235 3.221 0 4.609-2.804 5.624-5.475 5.921.42.36.793 1.096.793 2.207v3.293c0 .319.192.694.8.576C20.565 22.091 24 17.535 24 12c0-6.627-5.373-12-12-12z"/></svg>
-                </a>
+                <!-- Contact Info/Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-10">
+                    <a href="mailto:your.email@example.com" class="flex items-center space-x-2 px-6 py-3 bg-white border border-primary-blue text-primary-blue font-semibold rounded-full shadow-md hover:bg-primary-blue hover:text-white transition duration-300 transform hover:scale-105">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-9 13h9a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>Email Me</span>
+                    </a>
+                    <a href="https://linkedin.com/in/yourprofile" target="_blank" class="flex items-center space-x-2 px-6 py-3 bg-white border border-secondary-gray text-secondary-gray font-semibold rounded-full shadow-md hover:bg-secondary-gray hover:text-white transition duration-300 transform hover:scale-105">
+                        <!-- LinkedIn Icon (Inline SVG) -->
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.532-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.756 7 2.476v6.759z"/></svg>
+                        <span>LinkedIn</span>
+                    </a>
+                </div>
             </div>
-          </div>
         </section>
-      </main>
 
-      <!-- Footer -->
-      <footer class="bg-gray-900 text-white py-6">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
-              <p>&copy; {{ currentYear() }} {{ portfolioData().name }}. Built with Angular & TypeScript.</p>
-          </div>
-      </footer>
-    </div>
-  `,
-  // Inline styles are kept minimal, using Tailwind for the heavy lifting.
-  styles: [`
-    /* Ensure smooth scrolling when clicking on navigation links */
-    :host {
-      display: block;
-      scroll-behavior: smooth;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class App {
-  // State is managed using signals, the modern Angular way (instead of NgRx for a simple component)
-  portfolioData = signal<PortfolioData>({
-    name: 'Alex Johnson',
-    title: 'Senior Software Engineer | Angular & TypeScript Specialist',
-    email: 'alex.johnson@example.com',
-    social: {
-      linkedin: 'https://linkedin.com/in/alex-johnson-dev',
-      github: 'https://github.com/alex-johnson-dev',
-    },
-    skills: [
-      { title: 'Frontend', items: ['Angular (v18+)', 'TypeScript', 'RxJS', 'NgRx/Signals', 'Tailwind CSS'] },
-      { title: 'Backend', items: ['Node.js (Express)', 'Python (FastAPI)', 'Microservices', 'REST APIs'] },
-      { title: 'Databases', items: ['PostgreSQL', 'MongoDB', 'Redis', 'SQL/NoSQL Design'] },
-      { title: 'DevOps/Cloud', items: ['AWS/GCP', 'Docker', 'CI/CD Pipelines', 'Git Workflow'] }
-    ],
-    projects: [
-      {
-        name: 'Enterprise Dashboard',
-        description: 'A data visualization platform built on Angular, utilizing RxJS for complex state management and D3.js for interactive charts.',
-        imageUrl: 'https://placehold.co/600x400/3730a3/ffffff?text=Dashboard+App',
-        techStack: ['Angular', 'TypeScript', 'NgRx', 'Tailwind CSS'],
-        liveUrl: '#',
-        githubUrl: '#'
-      },
-      {
-        name: 'Serverless API Gateway',
-        description: 'Backend service for a finance application, deployed on AWS Lambda with Python. Implements robust authentication via JWT.',
-        imageUrl: 'https://placehold.co/600x400/0f766e/ffffff?text=Serverless+API',
-        techStack: ['Python', 'FastAPI', 'AWS', 'Docker'],
-        liveUrl: '#',
-        githubUrl: '#'
-      },
-      {
-        name: 'Component Library',
-        description: 'A reusable UI library published to npm, ensuring consistency across multiple Angular projects within the organization.',
-        imageUrl: 'https://placehold.co/600x400/9d174d/ffffff?text=Design+System',
-        techStack: ['Angular', 'TypeScript', 'SCSS', 'Jest'],
-        liveUrl: '#',
-        githubUrl: '#'
-      }
-    ]
-  });
+    </main>
 
-  // Computed signal for the current year, automatically reactive if it needed to be dynamic
-  currentYear = signal(new Date().getFullYear());
-}
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; <span id="current-year"></span> Your Name. All rights reserved.</p>
+            <p class="mt-2">Built with <span class="text-red-500">&hearts;</span> and Hosted on GitHub Pages.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Set current year in the footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Mobile Menu Toggle Logic
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link is clicked
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
