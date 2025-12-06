@@ -1,277 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ApniNotes - Expert Course Notes</title>
-    <!-- Load Tailwind CSS -->
+    <link rel="icon" type="image/jpg" href="assets/favicon.jpg" />
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configure Tailwind to use Inter font and necessary colors -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        'primary-indigo': '#4f46e5', // A strong indigo color
-                        'secondary-green': '#10b981', // A supportive green
+                        'primary-indigo': '#4f46e5',
+                        'secondary-green': '#10b981'
                     }
-                },
-            }
-        }
-    </script>
-    <style>
-        /* Ensures smooth transitions for the sliders */
-        .slider-track {
-            transition: transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .carousel-track {
-            transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        /* Style for the fixed header */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-
-    <div id="app-root">
-        <!-- Application content will be rendered here by JavaScript -->
-    </div>
-
-    <script>
-        // --- DATA DEFINITION ---
-        const APP_DATA = {
-            appName: "ApniNotes",
-            appSlogan: "Unlock your courses with expert notes.",
-            apkDownloadUrl: "assets/ApniNotes.apk",
-            posters: [
-                {id: 1, title: "Semester 1: B.Com & B.Com (Honours)", imageUrl: "assets/sem-1-banner.jpg"},
-                {id: 2, title: "Semester 3: B.Com & B.Com (Honours)", imageUrl: "assets/sem-3-banner.jpg"},
-            ],
-            sampleNotes: [
-                { id: 1, title: "Calculus I: Integration", imageUrl: "https://placehold.co/800x600/6366f1/ffffff?text=Math+Notes" },
-                { id: 2, title: "World History: Cold War", imageUrl: "https://placehold.co/800x600/ef4444/ffffff?text=History+Timeline" },
-                { id: 3, title: "Python: Asynchronous Code", imageUrl: "https://placehold.co/800x600/10b981/ffffff?text=Programming+Snippet" },
-                { id: 4, title: "Economics: Supply & Demand", imageUrl: "https://placehold.co/800x600/f59e0b/ffffff?text=Economics+Graph" },
-            ],
-        };
-
-        // --- STATE & UTILITIES ---
-        let currentPosterIndex = 0;
-        let currentSampleIndex = 0;
-        let posterIntervalId = null;
-
-        function getCurrentYear() {
-            return new Date().getFullYear();
-        }
-
-        // --- RENDER FUNCTIONS ---
-
-        function renderHeader() {
-            return `
-                <header class="shadow-lg bg-primary-indigo text-white">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                        <div class="flex items-center justify-between">
-                            <h1 class="text-3xl font-bold tracking-wider">${APP_DATA.appName}</h1>
-                            <nav class="hidden md:flex space-x-6 text-sm font-medium">
-                                <a href="#posters" class="hover:text-indigo-200 transition">Features</a>
-                                <a href="#samples" class="hover:text-indigo-200 transition">Samples</a>
-                            </nav>
-                        </div>
-                    </div>
-                </header>
-            `;
-        }
-
-        function renderHero() {
-            return `
-                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-20 pt-16">
-                    <h2 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tighter">
-                        Your All-in-One Course Notes Solution
-                    </h2>
-                    <p class="text-xl text-gray-600 mb-10">${APP_DATA.appSlogan}</p>
-
-                    <a href="${APP_DATA.apkDownloadUrl}" target="_blank" rel="noopener"
-                        class="inline-flex items-center justify-center space-x-4 
-                               px-10 py-4 text-xl font-bold text-white bg-secondary-green rounded-full 
-                               shadow-2xl shadow-secondary-green/50 hover:bg-green-700 transition 
-                               transform hover:scale-105 active:scale-95 duration-200 focus:ring-4 focus:ring-green-300"
-                    >
-                        <!-- Download Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        <span>Download APK Now & Start Learning</span>
-                    </a>
-                    <p class="mt-3 text-sm text-gray-500">Available for Android Devices. Secure & Fast Download.</p>
-                </section>
-            `;
-        }
-
-        function renderPosterSlider() {
-            const postersHtml = APP_DATA.posters.map((poster) => `
-                <div class="min-w-full flex-shrink-0" style="flex: 0 0 100%;">
-                    <img src="${poster.imageUrl}" alt="${poster.title || 'Poster'}"
-                        class="w-full h-96 object-cover rounded-none"
-                        onerror="this.onerror=null;this.src='https://placehold.co/1200x600/cccccc/333333?text=Poster+Unavailable';" />
-                </div>
-            `).join('');
-
-            return `
-                <section id="posters" class="px-4 py-12 bg-gray-100/70 border-y border-gray-200">
-                    <h2 class="text-3xl font-bold text-center text-primary-indigo mb-6">Why Choose ${APP_DATA.appName}?</h2>
-                    <div class="relative w-full max-w-6xl mx-auto rounded-2xl shadow-xl overflow-hidden bg-white">
-                        <div id="poster-track" class="slider-track flex" style="transform: translateX(-${currentPosterIndex * 100}%)">
-                            ${postersHtml}
-                        </div>
-
-                        <button onclick="prevPoster()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition z-10 ring-1 ring-gray-200" aria-label="Previous Poster">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <button onclick="nextPoster()" class="absolute top-1/2 right-4 transform -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition z-10 ring-1 ring-gray-200" aria-label="Next Poster">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                        </button>
-
-                        <div id="poster-indicators" class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-                            ${APP_DATA.posters.map((_, i) => `
-                                <button onclick="setPoster(${i})"
-                                    class="h-3 rounded-full transition-all duration-300 ${i === currentPosterIndex ? 'bg-primary-indigo w-6' : 'bg-gray-300 w-3'}"
-                                    aria-label="Go to poster ${i + 1}">
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                </section>
-            `;
-        }
-        
-        function renderNotesCarousel() {
-            const samplesHtml = APP_DATA.sampleNotes.map(sample => `
-                <div class="min-w-full flex-shrink-0 p-4 bg-white" style="flex: 0 0 100%;">
-                    <img src="${sample.imageUrl}" alt="${sample.title}" 
-                         class="w-full h-auto max-h-[500px] object-contain rounded-lg shadow-inner ring-1 ring-gray-200"
-                         onerror="this.onerror=null;this.src='https://placehold.co/800x450/cccccc/333333?text=Note+Image+Unavailable';"
-                    />
-                    <p class="text-center mt-4 text-xl font-semibold text-gray-700">${sample.title}</p>
-                </div>
-            `).join('');
-
-            return `
-                <section id="samples" class="px-4 py-20">
-                    <h2 class="text-3xl font-bold text-center text-primary-indigo mb-10">Sneak Peek: Quality Notes You Can Trust</h2>
-                    <div class="relative w-full max-w-6xl mx-auto">
-                        <div class="overflow-hidden rounded-xl shadow-2xl border-4 border-gray-100">
-                            <!-- Slider Track -->
-                            <div id="sample-track" class="carousel-track flex" style="transform: translateX(-${currentSampleIndex * 100}%)">
-                                ${samplesHtml}
-                            </div>
-                        </div>
-                        
-                        <!-- Navigation Buttons -->
-                        <button onclick="prevSample()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-3 bg-white/90 hover:bg-white rounded-full shadow-xl transition duration-300 z-10 border border-gray-200" aria-label="Previous Sample">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-indigo"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <button onclick="nextSample()" class="absolute top-1/2 right-4 transform -translate-y-1/2 p-3 bg-white/90 hover:bg-white rounded-full shadow-xl transition duration-300 z-10 border border-gray-200" aria-label="Next Sample">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-indigo"><polyline points="9 18 15 12 9 6"/></svg>
-                        </button>
-                    </div>
-                </section>
-            `;
-        }
-
-        function renderFooter() {
-            return `
-                <footer class="py-6 bg-gray-900 text-white text-center text-sm">
-                    <p>&copy; ${getCurrentYear()} ${APP_DATA.appName}. All rights reserved.</p>
-                    <p class="text-xs text-gray-400 mt-1">Download the app for the full learning experience.</p>
-                </footer>
-            `;
-        }
-
-        function updateSlider(index, total, trackId, indicatorId, stateVar) {
-            const track = document.getElementById(trackId);
-            if (!track) return;
-            track.style.transform = `translateX(-${index * 100}%)`;
-            window[stateVar] = index;
-
-            const indicators = document.getElementById(indicatorId);
-            if (indicators) {
-                indicators.innerHTML = '';
-                for (let i = 0; i < total; i++) {
-                    indicators.innerHTML += `
-                        <button onclick="setPoster(${i})" 
-                            class="h-3 rounded-full transition-all duration-300 ${i === index ? 'bg-primary-indigo w-5' : 'bg-gray-300 w-3'}"
-                            aria-label="Go to slide ${i + 1}">
-                        </button>`;
                 }
             }
-        }
-
-        // --- CONTROL FUNCTIONS ---
-        
-        function startPosterAutoSlide() {
-            if (posterIntervalId) clearInterval(posterIntervalId);
-            posterIntervalId = setInterval(nextPoster, 5000);
-        }
-        
-        function setPoster(index) {
-            clearInterval(posterIntervalId);
-            currentPosterIndex = index;
-            updateSlider(currentPosterIndex, APP_DATA.posters.length, 'poster-track', 'poster-indicators', 'currentPosterIndex');
-            startPosterAutoSlide();
-        }
-
-        function nextPoster() {
-            const nextIndex = (currentPosterIndex + 1) % APP_DATA.posters.length;
-            setPoster(nextIndex);
-        }
-
-        function prevPoster() {
-            const prevIndex = (currentPosterIndex - 1 + APP_DATA.posters.length) % APP_DATA.posters.length;
-            setPoster(prevIndex);
-        }
-
-        function nextSample() {
-            currentSampleIndex = (currentSampleIndex + 1) % APP_DATA.sampleNotes.length;
-            updateSlider(currentSampleIndex, APP_DATA.sampleNotes.length, 'sample-track', null, 'currentSampleIndex');
-        }
-
-        function prevSample() {
-            currentSampleIndex = (currentSampleIndex - 1 + APP_DATA.sampleNotes.length) % APP_DATA.sampleNotes.length;
-            updateSlider(currentSampleIndex, APP_DATA.sampleNotes.length, 'sample-track', null, 'currentSampleIndex');
-        }
-
-        // Expose functions to the global scope for event handlers in the generated HTML
-        window.nextPoster = nextPoster;
-        window.prevPoster = prevPoster;
-        window.setPoster = setPoster;
-        window.nextSample = nextSample;
-        window.prevSample = prevSample;
-
-
-        // --- INITIALIZATION ---
-        function initializeApp() {
-            const appRoot = document.getElementById('app-root');
-            if (appRoot) {
-                appRoot.innerHTML = `
-                    ${renderHeader()}
-                    <main>
-                        ${renderHero()}
-                        ${renderPosterSlider()}
-                        ${renderNotesCarousel()}
-                    </main>
-                    ${renderFooter()}
-                `;
-            }
-            // Start the auto-slide only after the content is loaded
-            startPosterAutoSlide();
-        }
-
-        window.onload = initializeApp;
+        };
     </script>
+
+    <!-- Project styles -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <div id="app-root">
+        <!-- App will render here -->
+    </div>
+
+    <!-- Load app code (single JS file) -->
+    <script src="script.js"></script>
 </body>
 </html>

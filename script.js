@@ -1,4 +1,4 @@
-// script.js
+// script.js - application logic (single source of truth)
 
 // --- DATA DEFINITION ---
 const APP_DATA = {
@@ -6,32 +6,19 @@ const APP_DATA = {
     appSlogan: "Unlock your courses with expert notes.",
     apkDownloadUrl: "assets/ApniNotes.apk",
     posters: [
-        {
-            id: 1,
-            title: "Comprehensive Notes for All Courses!",
-            subtitle: "Stop summarizing, start studying.",
-            items: ["Math, Science, History, Languages", "Programming & Technology", "Business & Economics", "Art & Philosophy"],
-            bgColor: "bg-primary-indigo",
-            iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
-        },
-        {
-            id: 2,
-            title: "Flexible Pricing Plans!",
-            subtitle: "Affordable access to quality education.",
-            items: ["Monthly Subscription: $5.99", "Per Course Access: $3.99", "Annual Premium: $49.99 (Best Value!)"],
-            bgColor: "bg-secondary-green",
-            iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
-        },
+        { id: 1, title: "Semester 1: B.Com & B.Com (Honours)", imageUrl: "assets/sem-1-banner.jpg" },
+        { id: 2, title: "Semester 3: B.Com & B.Com (Honours)", imageUrl: "assets/sem-3-banner.jpg" }
     ],
     sampleNotes: [
-        { id: 1, title: "Calculus I: Integration", imageUrl: "https://placehold.co/800x600/6366f1/ffffff?text=Math+Notes" },
-        { id: 2, title: "World History: Cold War", imageUrl: "https://placehold.co/800x600/ef4444/ffffff?text=History+Timeline" },
-        { id: 3, title: "Python: Asynchronous Code", imageUrl: "https://placehold.co/800x600/10b981/ffffff?text=Programming+Snippet" },
-        { id: 4, title: "Economics: Supply & Demand", imageUrl: "https://placehold.co/800x600/f59e0b/ffffff?text=Economics+Graph" },
-    ],
+        { id: 1, title: "Business Law", imageUrl: "assets/business-law-notes.png" },
+        { id: 2, title: "Business Marketing", imageUrl: "assets/business-marketing-notes.png" },
+        { id: 3, title: "Financial Accounting", imageUrl: "assets/financial-accounting-notes.png" },
+        { id: 4, title: "Financial Management", imageUrl: "assets/financial-management-notes.png" },
+        { id: 5, title: "Marketing", imageUrl: "assets/marketing-notes.png" }
+    ]
 };
 
-// --- STATE & UTILITIES ---
+// --- STATE ---
 let currentPosterIndex = 0;
 let currentSampleIndex = 0;
 let posterIntervalId = null;
@@ -40,8 +27,7 @@ function getCurrentYear() {
     return new Date().getFullYear();
 }
 
-// --- RENDER FUNCTIONS ---
-
+// --- RENDERERS ---
 function renderHeader() {
     return `
         <header class="shadow-lg bg-primary-indigo text-white">
@@ -68,11 +54,11 @@ function renderHero() {
 
             <a href="${APP_DATA.apkDownloadUrl}" target="_blank" rel="noopener"
                 class="inline-flex items-center justify-center space-x-4 
-                        px-10 py-4 text-xl font-bold text-white bg-secondary-green rounded-full 
-                        shadow-2xl shadow-secondary-green/50 hover:bg-green-700 transition 
-                        transform hover:scale-105 active:scale-95 duration-200 focus:ring-4 focus:ring-green-300"
+                       px-10 py-4 text-xl font-bold text-white bg-secondary-green rounded-full 
+                       shadow-2xl shadow-secondary-green/50 hover:bg-green-700 transition 
+                       transform hover:scale-105 active:scale-95 duration-200 focus:ring-4 focus:ring-green-300"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                 <span>Download APK Now & Start Learning</span>
             </a>
             <p class="mt-3 text-sm text-gray-500">Available for Android Devices. Secure & Fast Download.</p>
@@ -120,10 +106,9 @@ function renderPosterSlider() {
 function renderNotesCarousel() {
     const samplesHtml = APP_DATA.sampleNotes.map(sample => `
         <div class="min-w-full flex-shrink-0 p-4 bg-white" style="flex: 0 0 100%;">
-            <img src="${sample.imageUrl}" alt="${sample.title}" 
+            <img src="${sample.imageUrl}" alt="${sample.title}"
                  class="w-full h-auto max-h-[500px] object-contain rounded-lg shadow-inner ring-1 ring-gray-200"
-                 onerror="this.onerror=null;this.src='https://placehold.co/800x450/cccccc/333333?text=Note+Image+Unavailable';"
-            />
+                 onerror="this.onerror=null;this.src='https://placehold.co/800x450/cccccc/333333?text=Note+Image+Unavailable';" />
             <p class="text-center mt-4 text-xl font-semibold text-gray-700">${sample.title}</p>
         </div>
     `).join('');
@@ -137,7 +122,7 @@ function renderNotesCarousel() {
                         ${samplesHtml}
                     </div>
                 </div>
-                
+
                 <button onclick="prevSample()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-3 bg-white/90 hover:bg-white rounded-full shadow-xl transition duration-300 z-10 border border-gray-200" aria-label="Previous Sample">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-indigo"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
@@ -158,15 +143,15 @@ function renderFooter() {
     `;
 }
 
+// --- SLIDER UPDATES ---
 function updateSlider(index, total, trackId, indicatorId, stateVar) {
     const track = document.getElementById(trackId);
     if (!track) return;
     track.style.transform = `translateX(-${index * 100}%)`;
-    window[stateVar] = index; // Update the global state
+    window[stateVar] = index;
 
     const indicators = document.getElementById(indicatorId);
     if (indicators) {
-        // Re-render indicators to show the active one
         indicators.innerHTML = APP_DATA.posters.map((_, i) => `
             <button onclick="setPoster(${i})" 
                 class="h-3 rounded-full transition-all duration-300 ${i === index ? 'bg-primary-indigo w-5' : 'bg-gray-300 w-3'}"
@@ -176,8 +161,7 @@ function updateSlider(index, total, trackId, indicatorId, stateVar) {
     }
 }
 
-// --- CONTROL FUNCTIONS ---
-
+// --- CONTROLS ---
 function startPosterAutoSlide() {
     if (posterIntervalId) clearInterval(posterIntervalId);
     posterIntervalId = setInterval(nextPoster, 5000);
@@ -210,32 +194,31 @@ function prevSample() {
     updateSlider(currentSampleIndex, APP_DATA.sampleNotes.length, 'sample-track', null, 'currentSampleIndex');
 }
 
-// Expose functions to the global scope for event handlers in the generated HTML
+// Expose functions/vars globally for buttons to call
 window.nextPoster = nextPoster;
 window.prevPoster = prevPoster;
 window.setPoster = setPoster;
 window.nextSample = nextSample;
 window.prevSample = prevSample;
-// Expose state variables globally for updateSlider (since it relies on them being global for the onclicks)
 window.currentPosterIndex = currentPosterIndex;
 window.currentSampleIndex = currentSampleIndex;
-
 
 // --- INITIALIZATION ---
 function initializeApp() {
     const appRoot = document.getElementById('app-root');
-    if (appRoot) {
-        appRoot.innerHTML = `
-            ${renderHeader()}
-            <main>
-                ${renderHero()}
-                ${renderPosterSlider()}
-                ${renderNotesCarousel()}
-            </main>
-            ${renderFooter()}
-        `;
-    }
-    // Set initial indicators and start the auto-slide only after the content is loaded
+    if (!appRoot) return;
+
+    appRoot.innerHTML = `
+        ${renderHeader()}
+        <main>
+            ${renderHero()}
+            ${renderPosterSlider()}
+            ${renderNotesCarousel()}
+        </main>
+        ${renderFooter()}
+    `;
+
+    // Create indicators and start auto slide
     updateSlider(currentPosterIndex, APP_DATA.posters.length, 'poster-track', 'poster-indicators', 'currentPosterIndex');
     startPosterAutoSlide();
 }
