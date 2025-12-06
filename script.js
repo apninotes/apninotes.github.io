@@ -11,7 +11,7 @@ const APP_DATA = {
     ],
     sampleNotes: [
         { id: 1, title: "Business Law", imageUrl: "assets/business-law-notes.png" },
-        { id: 2, title: "Business Marketing", imageUrl: "assets/business-marketing-notes.png" },
+        { id: 2, title: "Business Mathematics", imageUrl: "assets/business-mathematics-notes.png" },
         { id: 3, title: "Financial Accounting", imageUrl: "assets/financial-accounting-notes.png" },
         { id: 4, title: "Financial Management", imageUrl: "assets/financial-management-notes.png" },
         { id: 5, title: "Marketing", imageUrl: "assets/marketing-notes.png" }
@@ -30,10 +30,18 @@ function getCurrentYear() {
 // --- RENDERERS ---
 function renderHeader() {
     return `
-        <header class="shadow-lg bg-primary-indigo text-white">
+        <header class="shadow-lg bg-purple-700 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex items-center justify-between">
-                    <h1 class="text-3xl font-bold tracking-wider">${APP_DATA.appName}</h1>
+                    
+                    <div class="flex items-center space-x-3">
+                        <img 
+                            src="assets/favicon.jpg" 
+                            alt="${APP_DATA.appName} Logo" 
+                            class="h-16 w-16 rounded-full" 
+                        />
+                        <h1 class="text-3xl font-bold tracking-wider">${APP_DATA.appName}</h1>
+                    </div>
                     <nav class="hidden md:flex space-x-6 text-sm font-medium">
                         <a href="#posters" class="hover:text-indigo-200 transition">Features</a>
                         <a href="#samples" class="hover:text-indigo-200 transition">Samples</a>
@@ -69,9 +77,12 @@ function renderHero() {
 function renderPosterSlider() {
     const postersHtml = APP_DATA.posters.map((poster) => `
         <div class="min-w-full flex-shrink-0" style="flex: 0 0 100%;">
-            <img src="${poster.imageUrl}" alt="${poster.title || 'Poster'}"
-                 class="w-full h-96 object-cover rounded-none"
-                 onerror="this.onerror=null;this.src='https://placehold.co/1200x600/cccccc/333333?text=Poster+Unavailable';" />
+            <div class="relative w-full max-w-4xl mx-auto pb-[56.25%] 
+                         xl:max-h-[50vh] xl:mt-4 xl:mb-4"> 
+                <img src="${poster.imageUrl}" alt="${poster.title || 'Poster'}"
+                    class="absolute top-0 left-0 w-full h-full object-contain rounded-none"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1200x675/cccccc/333333?text=Poster+Unavailable';" />
+            </div>
         </div>
     `).join('');
 
@@ -82,23 +93,7 @@ function renderPosterSlider() {
                 <div id="poster-track" class="slider-track flex" style="transform: translateX(-${currentPosterIndex * 100}%)">
                     ${postersHtml}
                 </div>
-
-                <button onclick="prevPoster()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition z-10 ring-1 ring-gray-200" aria-label="Previous Poster">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                </button>
-                <button onclick="nextPoster()" class="absolute top-1/2 right-4 transform -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition z-10 ring-1 ring-gray-200" aria-label="Next Poster">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </button>
-
-                <div id="poster-indicators" class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-                    ${APP_DATA.posters.map((_, i) => `
-                        <button onclick="setPoster(${i})"
-                            class="h-3 rounded-full transition-all duration-300 ${i === currentPosterIndex ? 'bg-primary-indigo w-6' : 'bg-gray-300 w-3'}"
-                            aria-label="Go to poster ${i + 1}">
-                        </button>
-                    `).join('')}
                 </div>
-            </div>
         </section>
     `;
 }
