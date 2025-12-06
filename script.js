@@ -4,7 +4,7 @@
 const APP_DATA = {
     appName: "ApniNotes",
     appSlogan: "Unlock your courses with expert notes.",
-    apkDownloadUrl: "ApniNotes.apk",
+    apkDownloadUrl: "assets/ApniNotes.apk",
     posters: [
         {
             id: 1,
