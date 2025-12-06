@@ -113,24 +113,37 @@
         }
 
         function renderPosterSlider() {
-            const postersHtml = APP_DATA.posters.map(poster => `
-                <div class="min-w-full flex-shrink-0 p-8 sm:p-12 md:p-16 flex flex-col md:flex-row items-center justify-between" style="flex: 0 0 100%;">
-                    <!-- Content Card (Left) -->
-                    <div class="w-full md:w-1/2 p-6 rounded-xl shadow-2xl bg-white ring-1 ring-gray-100 text-center md:text-left h-full flex flex-col justify-center">
-                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">${poster.title}</h3>
-                        <ul class="text-left space-y-3 text-gray-700 font-medium">
-                            ${poster.items.map(item => `
-                                <li class="flex items-start">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-indigo mr-3 flex-shrink-0 mt-1"><polyline points="20 6 9 17 4 12"/></svg>
-                                    <span>${item}</span>
-                                </li>
-                            `).join('')}
-                        </ul>
+            const postersHtml = APP_DATA.posters.map((poster, idx) => `
+                <div class="min-w-full flex-shrink-0 p-6 sm:p-8 md:p-12 flex flex-col md:flex-row items-stretch" style="flex: 0 0 100%;">
+                    <!-- Left: Title + Items (mobile shows image below if provided) -->
+                    <div class="w-full md:w-1/2 p-6 rounded-xl shadow-2xl bg-white ring-1 ring-gray-100 text-center md:text-left flex flex-col justify-center">
+                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">${poster.title || ''}</h3>
+
+                        ${poster.items && poster.items.length ? `
+                            <ul class="text-left space-y-3 text-gray-700 font-medium">
+                                ${poster.items.map(item => `
+                                    <li class="flex items-start">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-indigo mr-3 flex-shrink-0 mt-1"><polyline points="20 6 9 17 4 12"/></svg>
+                                        <span>${item}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        ` : ''}
+
+                        <!-- On small screens show the banner image below the text if available -->
+                        ${poster.imageUrl ? `
+                            <img src="${poster.imageUrl}" alt="${poster.title || 'Banner'}" class="mt-6 md:hidden w-full rounded-lg object-cover max-h-60"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/800x450/cccccc/333333?text=Banner+Unavailable';" />
+                        ` : ''}
                     </div>
-                    <!-- Visual Background (Right) -->
-                    <div class="hidden md:flex w-1/2 h-full rounded-2xl p-8 ml-8 shadow-inner ${poster.bgColor} text-white flex-col justify-center items-center">
-                        ${poster.iconSvg}
-                        <p class="text-xl font-semibold italic text-center mt-4">${poster.subtitle}</p>
+
+                    <!-- Right: visual (hidden on small screens) -->
+                    <div class="hidden md:flex w-1/2 h-full rounded-2xl p-8 ml-8 shadow-inner ${poster.bgColor || 'bg-primary-indigo'} text-white flex-col justify-center items-center">
+                        ${poster.imageUrl ? `
+                            <img src="${poster.imageUrl}" alt="${poster.title || 'Banner'}" class="w-full h-full object-cover rounded-2xl"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/800x450/cccccc/333333?text=Banner+Unavailable';" />
+                        ` : (poster.iconSvg || '')}
+                        ${poster.subtitle ? `<p class="text-xl font-semibold italic text-center mt-4">${poster.subtitle}</p>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -139,12 +152,10 @@
                 <section id="posters" class="px-4 py-12 bg-gray-100/70 border-y border-gray-200">
                     <h2 class="text-3xl font-bold text-center text-primary-indigo mb-10">Why Choose ${APP_DATA.appName}?</h2>
                     <div class="relative w-full max-w-6xl mx-auto rounded-2xl shadow-xl overflow-hidden bg-white">
-                        <!-- Slider Track -->
                         <div id="poster-track" class="slider-track flex h-96" style="transform: translateX(-${currentPosterIndex * 100}%)">
                             ${postersHtml}
                         </div>
 
-                        <!-- Navigation Buttons -->
                         <button onclick="prevPoster()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-3 bg-white/70 hover:bg-white rounded-full shadow-lg transition duration-300 z-10 ring-1 ring-gray-200" aria-label="Previous Feature">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700"><polyline points="15 18 9 12 15 6"/></svg>
                         </button>
@@ -152,10 +163,9 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700"><polyline points="9 18 15 12 9 6"/></svg>
                         </button>
 
-                        <!-- Indicators -->
                         <div id="poster-indicators" class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
                             ${APP_DATA.posters.map((_, i) => `
-                                <button onclick="setPoster(${i})" 
+                                <button onclick="setPoster(${i})"
                                     class="h-3 rounded-full transition-all duration-300 ${i === currentPosterIndex ? 'bg-primary-indigo w-5' : 'bg-gray-300 w-3'}"
                                     aria-label="Go to slide ${i + 1}">
                                 </button>
