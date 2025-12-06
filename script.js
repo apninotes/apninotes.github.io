@@ -81,43 +81,37 @@ function renderHero() {
 }
 
 function renderPosterSlider() {
-    const postersHtml = APP_DATA.posters.map(poster => `
-        <div class="min-w-full flex-shrink-0 p-8 sm:p-12 md:p-16 flex flex-col md:flex-row items-center justify-between" style="flex: 0 0 100%;">
-            <div class="w-full md:w-1/2 p-6 rounded-xl shadow-2xl bg-white ring-1 ring-gray-100 text-center md:text-left h-full flex flex-col justify-center">
-                <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">${poster.title}</h3>
-                <ul class="text-left space-y-3 text-gray-700 font-medium">
-                    ${poster.items.map(item => `
-                        <li class="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-indigo mr-3 flex-shrink-0 mt-1"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>${item}</span>
-                        </li>
-                    `).join('')}
-                </ul>
-            </div>
-            <div class="hidden md:flex w-1/2 h-full rounded-2xl p-8 ml-8 shadow-inner ${poster.bgColor} text-white flex-col justify-center items-center">
-                ${poster.iconSvg}
-                <p class="text-xl font-semibold italic text-center mt-4">${poster.subtitle}</p>
-            </div>
+    const postersHtml = APP_DATA.posters.map((poster) => `
+        <div class="min-w-full flex-shrink-0" style="flex: 0 0 100%;">
+            <img src="${poster.imageUrl}" alt="${poster.title || 'Poster'}"
+                 class="w-full h-96 object-cover rounded-none"
+                 onerror="this.onerror=null;this.src='https://placehold.co/1200x600/cccccc/333333?text=Poster+Unavailable';" />
         </div>
     `).join('');
 
     return `
         <section id="posters" class="px-4 py-12 bg-gray-100/70 border-y border-gray-200">
-            <h2 class="text-3xl font-bold text-center text-primary-indigo mb-10">Why Choose ${APP_DATA.appName}?</h2>
+            <h2 class="text-3xl font-bold text-center text-primary-indigo mb-6">Why Choose ${APP_DATA.appName}?</h2>
             <div class="relative w-full max-w-6xl mx-auto rounded-2xl shadow-xl overflow-hidden bg-white">
-                <div id="poster-track" class="slider-track flex h-96" style="transform: translateX(-${currentPosterIndex * 100}%)">
+                <div id="poster-track" class="slider-track flex" style="transform: translateX(-${currentPosterIndex * 100}%)">
                     ${postersHtml}
                 </div>
 
-                <button onclick="prevPoster()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-3 bg-white/70 hover:bg-white rounded-full shadow-lg transition duration-300 z-10 ring-1 ring-gray-200" aria-label="Previous Feature">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700"><polyline points="15 18 9 12 15 6"/></svg>
+                <button onclick="prevPoster()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition z-10 ring-1 ring-gray-200" aria-label="Previous Poster">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
-                <button onclick="nextPoster()" class="absolute top-1/2 right-4 transform -translate-y-1/2 p-3 bg-white/70 hover:bg-white rounded-full shadow-lg transition duration-300 z-10 ring-1 ring-gray-200" aria-label="Next Feature">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700"><polyline points="9 18 15 12 9 6"/></svg>
+                <button onclick="nextPoster()" class="absolute top-1/2 right-4 transform -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition z-10 ring-1 ring-gray-200" aria-label="Next Poster">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
 
-                <div id="poster-indicators" class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-                    </div>
+                <div id="poster-indicators" class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                    ${APP_DATA.posters.map((_, i) => `
+                        <button onclick="setPoster(${i})"
+                            class="h-3 rounded-full transition-all duration-300 ${i === currentPosterIndex ? 'bg-primary-indigo w-6' : 'bg-gray-300 w-3'}"
+                            aria-label="Go to poster ${i + 1}">
+                        </button>
+                    `).join('')}
+                </div>
             </div>
         </section>
     `;
